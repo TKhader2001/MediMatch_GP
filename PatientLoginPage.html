@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+
+    <link rel="stylesheet" href="./global.css" />
+    <link rel="stylesheet" href="./PatientLoginPage.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap"
+    />
+  </head>
+  <body>
+    <div class="patient-login-page">
+      <div class="blue-background1"></div>
+      <div class="white-background-navbar"></div>
+      <div class="frame">
+        <div class="logo-medimatch-box-31">
+          <img class="logo-box-icon2" alt="" src="img & icon/HealthLogo.svg" />
+
+          <b class="medimatch-text">
+            <span>Medi</span>
+            <span class="match3">Match</span>
+          </b>
+        </div>
+      </div>
+      <div class="frame1">
+        <div class="blue-line-under-login-page"></div>
+      </div>
+      <div class="full-white-frame"></div>
+      <div class="error-patient-input" id="error-message"></div>
+      <div class="frame2">
+        <div class="form-full">
+          <div class="welcome-box">
+            <b class="welcome-text">Welcome </b>
+            <div class="enter-patient-id">Enter your patient ID</div>
+          </div>
+          <input
+            class="patient-id-input-box"
+            id="patientIdInput"
+            placeholder="Patient ID"
+            type="number"
+          />
+
+          <button class="button-box-effect-all" id="buttonBoxEffectAll" onclick="buttonBoxEffectAll()">
+            <div class="button-box">
+              <div class="view-patient-text">View Patient Profile</div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="nav-pages1">
+        <div class="login-page-text1">Login Page</div>
+        <div class="home-page-text1" id="homePageText">Home Page</div>
+      </div>
+      <div class="header-blue-background-box">
+        <div class="header-text2">
+          The health and well-being of our patients and their health care team
+          will always be our priority.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      //var buttonBoxEffectAll = document.getElementById("buttonBoxEffectAll");
+      function buttonBoxEffectAll(){
+          //buttonBoxEffectAll.addEventListener("click", function (e) {
+              // Get the patient ID from the input box
+              var patientId = document.querySelector(".patient-id-input-box").value;
+              // Construct the request body
+              const requestBody = {patient_id: parseInt(patientId)}; // Assuming patient ID is an integer
+              console.log(requestBody)
+              // Send a POST request to the backend
+              fetch('http://localhost:8000/patient_id', {
+                  method: 'POST', // Specify the method as POST
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(requestBody)
+              })
+                  .then(response => {
+                     if (!response.ok) {
+                        throw new Error('Patient ID not found');
+                     }
+                     return response.json();
+                  })
+                  .then(data => {
+                      // Handle the response data as needed
+                      console.log(data);
+                      // Redirect to the PatientPageNew.html (optional)
+                      window.location.href = "./PatientPageNew.html";
+                  })
+                  .catch(error => {
+                      document.getElementById('error-message').innerText = error.message;
+                  });
+          };
+  
+      var homePageText = document.getElementById("homePageText");
+      if (homePageText) {
+          homePageText.addEventListener("click", function (e) {
+              window.location.href = "./index.html";
+          });
+      }
+  </script>
+  </body>
+  </html>

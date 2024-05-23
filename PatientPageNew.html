@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, width=device-width" />
+  <link rel="stylesheet" href="./global.css" />
+  <link rel="stylesheet" href="./PatientPageNew.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" />
+</head>
+<body>
+  <div class="patient-page-new">
+    <div class="cover-blue-background">
+      <div class="cover-blue-background-child"></div>
+    </div>
+    <header class="navbar">
+      <div class="white-navbar-background1"></div>
+      <div class="pages-container">
+        <div class="nav-link">
+          <div class="patient-page">Patient Page</div>
+          <div class="home-page" id="homePageText">Home Page</div>
+        </div>
+      </div>
+    </header>
+    <div class="logo-medimatch-box-3">
+      <img class="logo-box-icon1" alt="" src="img & icon/HealthLogo.svg" />
+      <b class="medimatch3">
+        <span>Medi</span>
+        <span class="match2">Match</span>
+      </b>
+    </div>
+    <div class="header-blue-background">
+      <div class="header-text1">
+        The health and well-being of our patients and their health care team
+        will always be our priority.
+      </div>
+    </div>
+    <div class="blue-line-navbar1"></div>
+    <div class="white-background"></div>
+    <button class="download-button" id="PDF" onclick="generate_pdf()">
+      <div class="download-button-2">
+        <div class="download-button-frame">
+          <div class="download-button-text">Generate PDF</div>
+        </div>
+      </div>
+    </button>
+
+    <div class="full-content-box">
+      <div class="lifestyle-box1">
+        <textarea
+          class="lifestyle-plan-output"
+          placeholder="LifeStyle Plan recommendation"
+          id="lifestylePlanOutput"
+        ></textarea>
+      </div>
+      <div class="recommendation-box">
+        <div class="dosage-new-recommendation-box">
+          <div class="recommendation-box1">
+            <div class="last-recommendation-box"></div>
+          </div>
+          <div class="new-dosage-box">
+            <div
+              class="dosage-update-output"
+              placeholder="Dosage Update"
+              id="dosageUpdateOutput"
+            ></div>
+            <div class="dosage">Dosages:</div>
+          </div>
+        </div>
+        <div class="medication-new-recommendation">
+          <div class="new-medication-box">
+            <div
+              class="medication-update-output"
+              placeholder="Medication Update"
+              id="medicationUpdateOutput"
+            ></div>
+            <div class="medication">Medications:</div>
+          </div>
+        </div>
+        <div class="medication-last-frame">
+          <div class="medication-last-box">
+            <div
+              class="latest-medication-output"
+              placeholder="Latest Medication"
+              id="latestMedicationOutput"
+            ></div>
+            <div class="medication-last-text">Medications:</div>
+          </div>
+        </div>
+        <div class="dosage-last-frame">
+          <div class="dosage-last-box">
+            <div
+              class="latest-medication-output"
+              placeholder="Latest Dosage"
+              id="latestDosageOutput"
+            ></div>
+            <div class="dosage-last-text">Dosages:</div>
+          </div>
+        </div>
+      </div>
+      <div class="lifestyle-plan-text">Lifestyle Plan</div>
+      <div class="patient-information-text">Patient Information</div>
+      <div class="last-recommendation-if-container">
+        <span>LAST RECOMMENDATION </span>
+        <span class="if-exist">(IF EXIST)</span>
+      </div>
+      <div class="new-recommendation-if-container">
+        <span>NEW RECOMMENDATION </span>
+        <span class="if-exist">(IF THERE IS AN UPDATE)</span>
+      </div>
+      <div class="patient-information-box">
+        <div class="height-weight-input-box">
+          <div class="height-input">
+            <div class="height-output" id="heightOutput"></div>
+          </div>
+          <div class="weight-input">
+            <div class="height-output" id="weightOutput"></div>
+          </div>
+        </div>
+        <div class="height-weight-box">
+          <div class="height-text">Height</div>
+          <div class="height-text">Weight</div>
+        </div>
+        <div class="age-sex-box">
+          <div class="sex-box">
+            <div class="age-input">
+              <div class="age-output" id="ageOutput"></div>
+            </div>
+            <div class="age">Age</div>
+            <div class="sex-output" id="sexOutput"></div>
+            <div class="sex">Sex</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tests-box">
+      <div class="hba1c-text">HbA1c</div>
+      <div class="fbs-text">FBS</div>
+      <div class="rbs-text">RBS</div>
+      <div class="bp-text">BP</div>
+      <div class="fbs-output" id="fbsOutput"></div>
+      <div class="rbs-output" id="rbsOutput"></div>
+      <div class="bp-output" id="bpOutput"></div>
+      <div class="hba1c-output" id="hba1cOutput"></div>
+    </div>
+    <div class="diabetes-hypertension-box">
+      <div class="diabetes-mellitus">Diabetes Mellitus</div>
+      <div class="hypertension">Hypertension</div>
+      <div class="hypertension-output" id="hypertensionOutput"></div>
+      <div class="diabetes-output" id="diabetesOutput"></div>
+    </div>
+    <div class="patient-box">
+      <div class="patient-id-6189-container">
+        <span class="patient-id">Patient ID: </span>
+        <span class="span" id="patientIdOutput"></span>
+      </div>
+      <div class="patient-profile">Patient Profile</div>
+    </div>
+  </div>
+
+  <script>
+    var homePageText = document.getElementById("homePageText");
+    if (homePageText) {
+      homePageText.addEventListener("click", function (e) {
+        window.location.href = "./index.html";
+      });
+    }
+
+    async function fetchData() {
+      try {
+        const patientDataResponse = await fetch("http://localhost:8000/patient_data");
+        const patientData = await patientDataResponse.json();
+        console.log("Data fetched from Patient Data", patientData);
+
+        document.getElementById("heightOutput").innerText = patientData.height;
+        document.getElementById("weightOutput").innerText = patientData.weight;
+        document.getElementById("ageOutput").innerText = patientData.age;
+        document.getElementById("sexOutput").innerText = patientData.sex ? "Female" : "Male";
+        document.getElementById("fbsOutput").innerText = patientData.fbs;
+        document.getElementById("rbsOutput").innerText = patientData.rbs;
+        document.getElementById("bpOutput").innerText = patientData.bp;
+        document.getElementById("hba1cOutput").innerText = patientData.hba1c;
+        document.getElementById("hypertensionOutput").innerText = patientData.hypertension ? "True" : "False";
+        document.getElementById("diabetesOutput").innerText = patientData.diabetes ? "True" : "False";
+        document.getElementById("patientIdOutput").innerText = patientData.patient_id;
+
+        const recommendationParagraphs = patientData.recommendation.map(recommendation => `${recommendation}`).join('\n');
+        document.getElementById("lifestylePlanOutput").innerHTML = recommendationParagraphs;
+
+        document.getElementById("latestDosageOutput").innerText = patientData.Latest_Dosage;
+        document.getElementById("latestMedicationOutput").innerText = patientData.Latest_Medication;
+
+        const dosageParagraphs = patientData.Updated_Dosage.map(Updated_Dosage => `<p>${Updated_Dosage}</p>`).join(',');
+        document.getElementById("dosageUpdateOutput").innerHTML = dosageParagraphs;
+
+        const medicationParagraphs = patientData.Updated_Medication.map(Updated_Medication => `<p>${Updated_Medication}</p>`).join(',');
+        document.getElementById("medicationUpdateOutput").innerHTML = medicationParagraphs;
+
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    function generate_pdf() {
+      fetch("http://localhost:8000/generate_pdf_with_text")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.blob();
+        })
+        .then(blob => {
+          const PDFUrl = URL.createObjectURL(blob);
+          window.open(PDFUrl, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=200,left=600,width=2400,height=1400");
+        })
+        .catch(error => console.error("Error generating PDF:", error));
+    }
+
+    // IIFE to fetch data when the page loads
+    (function() {
+      fetchData();
+    })();
+  </script>
+</body>
+</html>

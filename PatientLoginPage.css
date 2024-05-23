@@ -1,0 +1,286 @@
+
+/* You may also need to adjust other elements to maintain the layout */
+.form-full,
+.full-white-frame {
+  transform: translateX(-100px);
+  transform: scale(0.9);
+}
+.form-full,
+.error-patient-input  {
+  transform: translateX(-50px);
+}
+
+.blue-background1 {
+  position: absolute;
+  top: 124px;
+  left: 0;
+  border-radius: var(--br-base);
+  background: linear-gradient(91.75deg, #2aa7ff, #0c8ce6);
+  width: 1440px;
+  height: 110px;
+  overflow: hidden;
+}
+.white-background-navbar {
+  position: absolute;
+  top: 91px;
+  left: 0;
+  box-shadow: 0 9px 12px rgba(32, 74, 105, 0.07);
+  background-color: var(--white);
+  width: 1440px;
+  height: 47px;
+}
+.logo-box-icon2 {
+  width: 37.3px;
+  position: relative;
+  height: 22.5px;
+}
+.match3 {
+  color: var(--color-cornflowerblue-200);
+}
+.medimatch-text {
+  width: 175.4px;
+  position: relative;
+  letter-spacing: 0.02em;
+  line-height: 68px;
+  display: inline-block;
+  height: 66.6px;
+  flex-shrink: 0;
+}
+.frame,
+.logo-medimatch-box-31 {
+  width: 219.2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.frame {
+  position: absolute;
+  top: 81px;
+  left: 99px;
+  width: 1198.5px;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+}
+.blue-line-under-login-page {
+  width: 89px;
+  position: relative;
+  background-color: var(--color-cornflowerblue-200);
+  height: 3px;
+}
+.frame1 {
+  position: absolute;
+  top: 135px;
+  left: 616px;
+  width: 208px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.full-white-frame {
+  position: absolute;
+  top: 172px;
+  left: calc(50% - 620px);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--br-mini);
+  background-color: var(--white);
+  width: 1240px;
+  height: 749px;
+}
+.error-patient-input {
+  position: absolute;
+  top: 730px;
+  left: 654px;
+  line-height: 100%;
+  display: flex;
+  align-items: center;
+  width: 182px;
+  height: 10px;
+}
+.enter-patient-id,
+.welcome-text {
+  position: relative;
+  line-height: 100%;
+}
+.enter-patient-id {
+  font-size: var(--heading-size);
+  font-weight: 600;
+  color: var(--foreground-high);
+}
+.patient-id-input-box{
+  align-self: stretch;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.welcome-box {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.welcome-box {
+  gap: 16px;
+}
+.patient-id-input-box {
+  border: 3px solid var(--color-lavender);
+  outline: 0;
+  background-color: transparent;
+  border-radius: var(--br-5xs);
+  box-sizing: border-box;
+  height: 48px;
+  flex-direction: row;
+  
+}
+.view-patient-text {
+  position: relative;
+  font-size: var(--body-large-semibold-size);
+  line-height: 100%;
+  font-weight: 600;
+  font-family: var(--heading-4-14);
+  color: var(--foreground-oncolor);
+  text-align: left;
+}
+.button-box {
+  align-self: stretch;
+  border-radius: var(--br-5xs);
+  background-color: var(--container-primary);
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-base);
+  box-sizing: border-box;
+}
+.button-box-effect-all {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-5xl);
+}
+.form-full,
+.frame2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.form-full {
+  width: 711px;
+  border-radius: var(--br-xl);
+  background-color: var(--white);
+  height: 436px;
+  align-items: center;
+  padding: var(--padding-29xl) var(--padding-53xl);
+  box-sizing: border-box;
+  gap: var(--gap-13xl);
+}
+.frame2 {
+  position: absolute;
+  top: 234px;
+  left: 364px;
+  width: 712px;
+  overflow: hidden;
+  align-items: flex-start;
+  font-size: var(--body-large-semibold-size);
+  color: #0f0f0f;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+.login-page-text1 {
+  position: relative;
+  font-weight: 600;
+}
+.home-page-text1 {
+  position: relative;
+  color: var(--color-darkslateblue-200);
+  cursor: pointer;
+}
+.nav-pages1 {
+  position: absolute;
+  top: 100px;
+  left: 620px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-21xl);
+  color: var(--color-cornflowerblue-200);
+}
+.header-text2 {
+  align-self: stretch;
+  position: relative;
+  transform: translateX(-60px);
+}
+.header-blue-background-box {
+  position: absolute;
+  top: 51px;
+  left: 0;
+  background-color: var(--color-cornflowerblue-200);
+  width: 1440px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 9px 177px;
+  box-sizing: border-box;
+  text-align: center;
+  color: var(--white);
+}
+.patient-login-page {
+  width: 100%;
+  position: relative;
+  background: linear-gradient(81deg, #eff5fe, rgba(241, 247, 255, 0.47));
+  height: 1024px;
+  overflow: hidden;
+  text-align: left;
+  font-size: var(--heading-4-14-size);
+  color: var(--color-black);
+  font-family: var(--heading-4-14);
+}
+/* Default styles */
+
+/* Styles for screens smaller than 600px (e.g., smartphones) */
+@media only screen and (max-width: 600px) {
+  /* Adjust styles for smaller screens */
+  .blue-background1,
+  .white-background-navbar,
+  .frame,
+  .frame1,
+  .full-white-frame,
+  .error-patient-input,
+  .form-full,
+  .frame2,
+  .header-blue-background-box,
+  .nav-pages1 {
+    width: 100%; /* Make elements full width */
+    left: 0; /* Reset left position */
+  }
+  .blue-background1,
+  .white-background-navbar {
+    position: relative; /* Reset position */
+    top: 0; /* Reset top position */
+    border-radius: 0; /* Reset border radius */
+  }
+  .header-blue-background-box {
+    padding: 9px 20px; /* Adjust padding */
+  }
+  .frame,
+  .frame1,
+  .frame2 {
+    position: static; /* Reset position */
+  }
+}
+/* Styles for screens larger than 600px (e.g., iPhones in landscape mode) */
+

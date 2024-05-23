@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, width=device-width" />
+
+  <link rel="stylesheet" href="./global.css" />
+  <link rel="stylesheet" href="./LoginPage.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" />
+</head>
+<body>
+  <div class="login-page">
+    <div class="blue-background"></div>
+    <div class="navbar-box">
+      <div class="white-navbar-background"></div>
+      <div class="blue-line-navbar"></div>
+    </div>
+    <div class="logo-medimatch-box">
+      <img class="logo-box-icon" alt="" src="img & icon/HealthLogo.svg" />
+
+      <b class="medimatch2">
+        <span>Medi</span>
+        <span class="match1">Match</span>
+      </b>
+    </div>
+    <div class="white-background-box"></div>
+    <div class="error-login-input"></div>
+    <div class="form-full-box">
+      <div class="title-login-to-box">
+        <div class="title-login-to">Login to your account</div>
+      </div>
+      <div class="full-inputs-box">
+        <div class="doctor-id-box">
+          <div class="doctor-id-first-frame">
+            <div class="doctor-id-first">Username</div>
+          </div>
+          <input
+            class="doctor-id-input-box"
+            id="usernameInput"
+            placeholder="Enter your username"
+            type="text"
+          />
+        </div>
+        <div class="doctor-id-box">
+          <div class="doctor-id-first-frame">
+            <div class="doctor-id-first">Password</div>
+          </div>
+          <input
+            class="password-input-box"
+            id="passwordInput"
+            placeholder="Enter your Password"
+            type="password"
+          />
+        </div>
+      </div>
+      <button class="button-frame" id="loginButton" onclick="loginButton()" data-animate-on-scroll>
+        <div class="button">
+          <div class="login-button-text">Login</div>
+        </div>
+      </button>
+    </div>
+    <div class="nav-pages">
+      <div class="login-page-text">Login Page</div>
+      <div class="home-page-text" id="homePageText">Home Page</div>
+    </div>
+    <div class="header-box">
+      <div class="header-text">
+        The health and well-being of our patients and their health care team
+        will always be our priority.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // var loginButton = document.getElementById("loginButton");
+    function loginButton(){
+      // if (loginButton) {
+        // loginButton.addEventListener("click", function (e) {
+          var username = document.getElementById("usernameInput").value;
+          var password = document.getElementById("passwordInput").value;
+          const user = { "username": username, "password": password }
+          console.log(user)
+          fetch("http://localhost:8000/login", {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }).then(response => {
+            console.log(response)
+            if (response.ok) {
+              // Redirect to another page upon successful login
+              window.location.href = "./PatientLoginPage.html";
+            } else {
+              // Handle invalid credentials
+              console.error("Invalid username or password");
+              // Display error message to the user
+              document.querySelector(".error-login-input").innerText = "Invalid username or password";
+            }
+          }).catch(error => {
+            console.error("Error:", error);
+            // Handle other errors
+          });
+        // });
+      // }
+    };
+    
+    var homePageText = document.getElementById("homePageText");
+    if (homePageText) {
+      homePageText.addEventListener("click", function (e) {
+        window.location.href = "./index.html";
+      });
+    }
+    var scrollAnimElements = document.querySelectorAll("[data-animate-on-scroll]");
+    var observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting || entry.intersectionRatio > 0) {
+            const targetElement = entry.target;
+            targetElement.classList.add("animate");
+            observer.unobserve(targetElement);
+          }
+        }
+      },
+      {
+        threshold: 0.15,
+      }
+    );
+    
+    for (let i = 0; i < scrollAnimElements.length; i++) {
+      observer.observe(scrollAnimElements[i]);
+    }
+  </script>
+</body>
+</html>
