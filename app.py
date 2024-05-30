@@ -300,6 +300,10 @@ lab_tests_data = None
 comorbidities_data = None
 drugs_data = None
 MedicationsView_data = None
+rec_med = None
+rec_dos = None
+meds_list = None
+
 # Define a function to get the first element of a DataFrame column safely
 def get_first_element(df, column_name,date_column):
     try:
@@ -425,78 +429,76 @@ labs_R = lab_tests_df
 readings_R = blood_pressure_df
 diseases_R = comorbidities_df
 #Generate Medications and Dosages Names
-
 def is_cream(drug_name):
     cream_keywords = ['oint', 'cream', 'top', 'opht', 'soln', 'ophth', 'gel']
-    return any(keyword in drug_name.lower() for keyword in cream_keywords)
+    drug_name_lower = drug_name.lower()
+    return any(re.search(r'\b' + keyword + r'\b', drug_name_lower) for keyword in cream_keywords)
 
 def extract_dosage(drug_name):
     if is_cream(drug_name):
         return 'Topical Nature'
 
-    slash_index = drug_name.find('/')
-    pct_index = drug_name.find('%')
-    match = None
+    drug_name_lower = drug_name.lower()
 
-    if (pct_index == -1) and (slash_index == -1):
+    if re.search(r'\bpen\b', drug_name_lower) or re.search(r'\bpenfill\b', drug_name_lower):
         match = re.search(r'\d+.*$', drug_name)
-    else:
-        if slash_index != -1:
-            match = re.search(r'\d+\.?\d*[A-Za-z]*\/\d*\.?\d*[A-Za-z]*\s[A-Za-z]+\s\d+\.?\d*[A-Za-z]*', drug_name)
+        if match:
+            return match.group(0)
 
+    if '/' in drug_name or '%' in drug_name:
+        match = re.search(r'\d+\.?\d*[A-Za-z]*\/\d*\.?\d*[A-Za-z]*\s[A-Za-z]+\s\d+\.?\d*[A-Za-z]*', drug_name)
+        if match:
+            return match.group(0)
+
+    match = re.search(r'\d+.*$', drug_name)
     if match:
         return match.group(0)
-    else:
-        parts = drug_name.split('/')
-        dos = ''
-        for part in parts:
-          match = re.search(r'(?<=\s)\d+.*$', part)
-          if match:
-            dos = dos + ('/' if dos else '') + match.group(0)
 
-        match = None
-        if '/' not in dos:
-          match = re.search(r'(?<=\s)\d+.*$', drug_name)
+    parts = drug_name.split('/')
+    dosages = []
+    for part in parts:
+        match = re.search(r'(?<=\s)\d+.*$', part)
         if match:
-          dos = match.group(0)
-        return dos if dos else None
+            dosages.append(match.group(0))
 
-drugs_lookup_R['dosage'] = drugs_lookup_R['DrugGenericName'].apply(extract_dosage)
+    if dosages:
+        return '/'.join(dosages)
+
+    return None
 
 def extract_medication(drug_name):
     if is_cream(drug_name):
         return drug_name
 
-    slash_index = drug_name.find('/')
-    pct_index = drug_name.find('%')
+    drug_name_lower = drug_name.lower()
 
-    if (pct_index == -1) and (slash_index == -1):
+    if re.search(r'\bpen\b', drug_name_lower) or re.search(r'\bpenfill\b', drug_name_lower):
         return re.sub(r'\d+.*$', '', drug_name).strip()
 
-    if slash_index != -1:
+    if '/' in drug_name or '%' in drug_name:
         match = re.search(r'\d+\.?\d*[A-Za-z]*\/\d*\.?\d*[A-Za-z]*\s[A-Za-z]+\s\d+\.?\d*[A-Za-z]*', drug_name)
         if match:
             return re.sub(r'\d+\.?\d*[A-Za-z]*\/\d*\.?\d*[A-Za-z]*\s[A-Za-z]+\s\d+\.?\d*[A-Za-z]*', '', drug_name).strip()
 
-    parts = drug_name.split('/')
-    name = ''
-    for i in range(len(parts)):
-      temp = parts[i]
-      parts[i] = re.sub(r'(?<=\s)\d+.*$', '', parts[i])
-      name += parts[i]
-      if temp == parts[i]:
-        parts[i] = ''
-        break
-    name = '/'.join(parts)
-    name = re.sub(r" /$", '', name)
-    name = re.sub(r" /", '/', name)
-    return name
+    name = re.sub(r'\s*\d+.*$', '', drug_name).strip()
 
-drugs_lookup_R['drug_name'] = drugs_lookup_R['DrugGenericName'].apply(extract_medication)
+    parts = drug_name.split('/')
+    names = []
+    for part in parts:
+        clean_part = re.sub(r'\s*\d+.*$', '', part).strip()
+        if clean_part:
+            names.append(clean_part)
+
+    return '/'.join(names)
 
 def fix_name(drug_name):
-    return re.sub(' ,', ', ', str(drug_name))
+    drug_name = re.sub(' ,', ', ', str(drug_name))
+    drug_name = re.sub(r'/*$', '', str(drug_name))
+    drug_name = re.sub(r' $', '', str(drug_name))
+    return drug_name
 
+drugs_lookup_R['dosage'] = drugs_lookup_R['DrugGenericName'].apply(extract_dosage)
+drugs_lookup_R['drug_name'] = drugs_lookup_R['DrugGenericName'].apply(extract_medication)
 drugs_lookup_R['drug_name'] = drugs_lookup_R['drug_name'].apply(fix_name)
 
 def get_med_dos(drugID, df):
@@ -639,32 +641,32 @@ def convert_to_surprise_format(df):
     long_df = long_df.dropna(subset=['Taken'])
 
     return long_df[['PatientSourceID', 'ItemID', 'Taken']]
-
+def test(merged_data):
 # Convert merged DataFrame to Surprise format
-surprise_data = convert_to_surprise_format(merged_data)
-# Define the scale of the dataset
-reader = Reader(rating_scale=(0, 1))
+    surprise_data = convert_to_surprise_format(merged_data)
+    # Define the scale of the dataset
+    reader = Reader(rating_scale=(0, 1))
 
-# Load the dataset into Surprise
-data = Dataset.load_from_df(surprise_data[['PatientSourceID', 'ItemID', 'Taken']], reader)
+    # Load the dataset into Surprise
+    data = Dataset.load_from_df(surprise_data[['PatientSourceID', 'ItemID', 'Taken']], reader)
 
-# Split data into training and test sets
-trainset, testset = train_test_split(data, test_size=0.25)
+    # Split data into training and test sets
+    trainset, testset = train_test_split(data, test_size=0.25)
 
-# Use the SVD algorithm
-algo = SVD()
+    # Use the SVD algorithm
+    algo = SVD()
 
-# Train the algorithm on the trainset and predict ratings for the testset
-algo.fit(trainset)
-predictions = algo.test(testset)
+    # Train the algorithm on the trainset and predict ratings for the testset
+    algo.fit(trainset)
+    predictions = algo.test(testset)
 
-# Calculate and print the RMSE
-rmse = accuracy.rmse(predictions)
+    # Calculate and print the RMSE
+    rmse = accuracy.rmse(predictions)
 
-meds_list=[]
-
+    return algo, trainset
 
 def get_item_recommendations(patient_id, algo, trainset, drugs_lookup, patient_profile_matrix):
+    meds_list = []
     # Get patient's medical conditions
     patient_row = patient_profile_matrix[patient_profile_matrix['PatientSourceID'] == patient_id]
     if patient_row.empty:
@@ -690,14 +692,37 @@ def get_item_recommendations(patient_id, algo, trainset, drugs_lookup, patient_p
     # Sort the items based on the predicted scores
     numeric_item_scores.sort(key=lambda x: x[1], reverse=True)
 
-
     # Print top recommended items, filtering based on patient's conditions
     for item, score in numeric_item_scores[:100]:
         row = drugs_lookup[drugs_lookup['DrugSourceID'] == int(item)]
         if not row.empty:
             usage = row.iloc[0]['Usage']
-            if (has_diabetes and usage == "DiabetesMellitus") or (has_hypertension and usage == "Arrhythmia and Hypertension"):
+            if (has_diabetes and usage == "Diabetes Mellitus") or (has_hypertension and usage == "Arrhythmia and Hypertension"):
                 meds_list.append((item,usage))
+    hypertension_drug = None
+    diabetes_drug = None
+    for item,usage in meds_list:
+        if usage == 'Diabetes Mellitus':
+                diabetes_drug = item
+                break
+
+    for item,usage in meds_list:
+        if usage == 'Arrhythmia and Hypertension':
+                hypertension_drug = item
+                break
+
+    rec_med=[]
+    rec_dos=[]
+
+    if hypertension_drug:
+            medication_h, dosage_h = get_med_dos(int(hypertension_drug), drugs_lookup_R)
+            rec_med.append(str(medication_h))
+            rec_dos.append(dosage_h)
+    if diabetes_drug:
+            medication_d, dosage_d = get_med_dos(int(diabetes_drug), drugs_lookup_R)
+            rec_med.append(str(medication_d))
+            rec_dos.append(dosage_d)
+    return rec_med,rec_dos,meds_list
 
 
 
@@ -735,36 +760,13 @@ def check_patient_id(patient_input: PatientInput):
         # If patient ID exists, fetch patient data and generate LifeStyle recommendations and Medication recommendation
         patient_data, medications_data, blood_pressure_data, height_data, weight_data, lab_tests_data, comorbidities_data, drugs_data, MedicationsView_data = fetch_patient_data(
             patients_df, medications_df, drugs_df, blood_pressure_df, height_df, weight_df, lab_tests_df, comorbidities_df, MedicationsView_df, patient_id)
+        algo, trainset = test(merged_data)
+        rec_med,rec_dos,meds_list = get_item_recommendations(patient_id, algo, trainset, drugs_lookup, patient_profile_matrix)
         recommendation = generate_recommendation(patient_data, medications_data, blood_pressure_data, height_data, weight_data, lab_tests_data, comorbidities_data, drugs_data)
-        get_item_recommendations(patient_id, algo, trainset, drugs_lookup, patient_profile_matrix)
-        
-        hypertension_drug = None
-        diabetes_drug = None
-
-        for item,usage in meds_list:
-            if usage == 'Arrhythmia and Hypertension':
-                hypertension_drug = item
-                break
-        for item,usage in meds_list:
-            if usage == 'DiabetesMellitus':
-                diabetes_drug = item
-                break
-
-
-        rec_med=[]
-        rec_dos=[]
-        if hypertension_drug:
-            medication_h, dosage_h = get_med_dos(int(hypertension_drug), drugs_lookup_R)
-            rec_med.append(str(medication_h))
-            rec_dos.append(dosage_h)
-        if diabetes_drug:
-            medication_d, dosage_d = get_med_dos(int(diabetes_drug), drugs_lookup_R)
-            rec_med.append(str(medication_d))
-            rec_dos.append(dosage_d)
-        last_med,last_dos = get_med_dos(int(MedicationsView_data["DrugSourceID"].iloc[0]), drugs_lookup_R)
+        last_med,last_dos = get_med_dos(int(MedicationsView_data["DrugSourceID"].iloc[-1]), drugs_lookup_R)
         
         # Redirect to PatientPageNew.html with additional data
-        return JSONResponse(content={"message": "Patient data retrieved", "redirect_url": "./PatientPageNew.html", "recommendation": recommendation,"Updated_Medication": rec_med,"Updated_Dosage": rec_dos,"Latest_Medication":last_med,"Latest_Dosage":last_dos},media_type="text/html")
+        return JSONResponse(content={"message": "Patient data retrieved", "redirect_url": "./PatientPageNew.html", "recommendation": recommendation,"Updated_Medication": rec_med,"Updated_Dosage": rec_dos,"Latest_Medication":last_med,"Latest_Dosage":last_dos,"medlist":meds_list},media_type="text/html")
     else:
         # If patient ID does not exist, return an error message
         raise HTTPException(status_code=404, detail="Patient ID not found")
@@ -789,12 +791,14 @@ def get_patient_data():
         "Latest_Dosage": last_dos,
         "Latest_Medication": last_med,
         "Updated_Dosage": rec_dos,
-        "Updated_Medication": rec_med
+        "Updated_Medication": rec_med,
+        "medlist":(meds_list)
     }
-    reset_global_variables()
+
     # Convert numpy types to native Python types
     response_data = convert_numpy_types(response_data)
     return response_data
+    reset_global_variables()
 
 def generate_pdf_with_text(data: dict):
     pdf_buffer = BytesIO()
@@ -805,7 +809,7 @@ def generate_pdf_with_text(data: dict):
     c = canvas.Canvas(pdf_buffer, pagesize=(custom_page_width, custom_page_height))
     
     
-    c.setFont("Helvetica", 12)
+    c.setFont("Helvetica", 10)
 
     # Draw text on the page
     y_position = 950  # Starting y position for text
@@ -831,8 +835,8 @@ def generate_pdf_with_text(data: dict):
 async def generate_pdf_with_text_endpoint():
     x =  {
         "patient_id": (patient_id),
-        "height": get_first_element(height_data, "RATE","DateTimeTaken"),
-        "weight": (get_first_element(weight_data, "RATE","DateTimeTaken")),
+        "height": (get_first_element(height_data, "RATE", "DateTimeTaken")*2.54),
+        "weight": (get_first_element(weight_data, "RATE", "DateTimeTaken")*0.45359237),
         "age": int(patient_data["Age"]),
         "sex": patient_data["Sex"],
         "hypertension": int(patient_data["Hypertension"]),
@@ -854,7 +858,7 @@ async def generate_pdf_with_text_endpoint():
 # Main function to run the FastAPI application
 def main():
     
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, hostrec_dos="0.0.0.0", port=8000)
     
 if __name__ == "__main__":
     main()

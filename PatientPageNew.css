@@ -250,7 +250,7 @@
   line-height: 130%;
   font-weight: 500;
   display: inline-block;
-  height: 19.2px;
+  height: 69.2px;
 }
 .dosage-update-output {
   border: 0;
@@ -262,7 +262,7 @@
   left: 139px;
   color: var(--primary-main-color);
   text-align: left;
-  width: 110px;
+  width: 260px;
   opacity: 0.6;
 }
 .dosage {
@@ -293,7 +293,7 @@
   line-height: 130%;
   font-weight: 500;
   display: inline-block;
-  height: 19.2px;
+  height: 69.2px;
 }
 .medication-update-output {
   border: 0;
@@ -337,7 +337,7 @@
   line-height: 130%;
   font-weight: 500;
   display: inline-block;
-  height: 19.2px;
+  height: 69.2px;
 }
 .latest-medication-output {
   border: 0;
@@ -381,7 +381,7 @@
   font-weight: 500;
   display: inline-block;
   width: 55.5px;
-  height: 19.2px;
+  height: 69.2px;
 }
 .dosage-last-box {
   position: absolute;

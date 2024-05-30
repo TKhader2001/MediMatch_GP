@@ -84,7 +84,7 @@
               placeholder="Latest Medication"
               id="latestMedicationOutput"
             ></div>
-            <div class="medication-last-text">Medications:</div>
+            <div class="medication-last-text">Medication:</div>
           </div>
         </div>
         <div class="dosage-last-frame">
@@ -94,7 +94,7 @@
               placeholder="Latest Dosage"
               id="latestDosageOutput"
             ></div>
-            <div class="dosage-last-text">Dosages:</div>
+            <div class="dosage-last-text">Dosage:</div>
           </div>
         </div>
       </div>
@@ -172,8 +172,8 @@
         const patientData = await patientDataResponse.json();
         console.log("Data fetched from Patient Data", patientData);
 
-        document.getElementById("heightOutput").innerText = patientData.height;
-        document.getElementById("weightOutput").innerText = patientData.weight;
+        document.getElementById("heightOutput").innerText = (patientData.height * 2.54).toFixed(1);
+        document.getElementById("weightOutput").innerText = (patientData.weight * 0.4).toFixed(1);
         document.getElementById("ageOutput").innerText = patientData.age;
         document.getElementById("sexOutput").innerText = patientData.sex ? "Female" : "Male";
         document.getElementById("fbsOutput").innerText = patientData.fbs;
@@ -190,12 +190,11 @@
         document.getElementById("latestDosageOutput").innerText = patientData.Latest_Dosage;
         document.getElementById("latestMedicationOutput").innerText = patientData.Latest_Medication;
 
-        const dosageParagraphs = patientData.Updated_Dosage.map(Updated_Dosage => `<p>${Updated_Dosage}</p>`).join(',');
-        document.getElementById("dosageUpdateOutput").innerHTML = dosageParagraphs;
+        const dosageUpdateParagraphs = patientData.Updated_Dosage.map(dosage => `${dosage}`).join('<br>');
+        document.getElementById("dosageUpdateOutput").innerHTML = dosageUpdateParagraphs;
 
-        const medicationParagraphs = patientData.Updated_Medication.map(Updated_Medication => `<p>${Updated_Medication}</p>`).join(',');
-        document.getElementById("medicationUpdateOutput").innerHTML = medicationParagraphs;
-
+        const medicationUpdateParagraphs = patientData.Updated_Medication.map(medication => `${medication}`).join('<br>');
+        document.getElementById("medicationUpdateOutput").innerHTML = medicationUpdateParagraphs;
 
       } catch (error) {
         console.error("Error fetching data:", error);
